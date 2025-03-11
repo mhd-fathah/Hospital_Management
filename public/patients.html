@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System - Patients Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #4e73df;
+            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+        }
+        .sidebar-link {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            border-radius: 0.35rem;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-heading {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .content-wrapper {
+            min-height: 100vh;
+        }
+        .modal-header {
+            background-color: #4e73df;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar text-white px-0 pt-3 d-flex flex-column flex-shrink-0" style="width: 220px;">
+            <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none ps-4">
+                <span class="fs-4 fw-bold">MediCare</span>
+            </a>
+            <hr class="text-white mx-3">
+            
+            <ul class="nav nav-pills flex-column mb-auto px-2">
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-tachometer-alt me-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                
+                <div class="sidebar-heading mt-3 ps-3 mb-1">Management</div>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-user-md me-2"></i>
+                        Doctors
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link active d-flex align-items-center">
+                        <i class="fas fa-fw fa-users me-2"></i>
+                        Patients
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-calendar-check me-2"></i>
+                        Appointments
+                    </a>
+                </li>
+                
+                <div class="sidebar-heading mt-3 ps-3 mb-1">Reports</div>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-chart-line me-2"></i>
+                        Statistics
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-file-invoice-dollar me-2"></i>
+                        Billing
+                    </a>
+                </li>
+            </ul>
+            
+            <hr class="text-white mx-3">
+            <div class="dropdown px-3 mb-3">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="/api/placeholder/32/32" alt="Admin" width="32" height="32" class="rounded-circle me-2">
+                    <strong>Admin</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper flex-grow-1 bg-light">
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white shadow-sm mb-4">
+                <div class="container-fluid">
+                    <button class="btn" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="d-flex ms-auto">
+                        <div class="input-group me-3">
+                            <input class="form-control border-0 small" type="search" placeholder="Search..." aria-label="Search">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="vr mx-3"></div>
+                        <div class="dropdown">
+                            <a href="#" class="position-relative me-3 text-dark">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    3+
+                                </span>
+                            </a>
+                        </div>
+                        <div class="dropdown">
+                            <a href="#" class="position-relative me-3 text-dark">
+                                <i class="fas fa-envelope fa-fw"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    7
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <div class="container-fluid px-4">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Patients Management</h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">
+                        <i class="fas fa-plus-circle me-1"></i> Add New Patient
+                    </button>
+                </div>
+
+                <!-- Overview Cards -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Patients</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">2,453</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            New Patients (Monthly)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">87</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Admitted Patients</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">143</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-procedures fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Critical Patients</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-heartbeat fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Row -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Patients List</h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Filter Status
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item" href="#">All Patients</a></li>
+                                        <li><a class="dropdown-item" href="#">Admitted</a></li>
+                                        <li><a class="dropdown-item" href="#">Outpatient</a></li>
+                                        <li><a class="dropdown-item" href="#">Discharged</a></li>
+                                        <li><a class="dropdown-item" href="#">Critical</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="patientsTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Age/Gender</th>
+                                                <th>Contact</th>
+                                                <th>Doctor</th>
+                                                <th>Diagnosis</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>PAT-001</td>
+                                                <td>James Wilson</td>
+                                                <td>45/M</td>
+                                                <td>+1 (555) 234-5678</td>
+                                                <td>Dr. John Smith</td>
+                                                <td>Hypertension</td>
+                                                <td><span class="badge bg-success">Outpatient</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPatientModal"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPatientModal"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>PAT-002</td>
+                                                <td>Emily Parker</td>
+                                                <td>32/F</td>
+                                                <td>+1 (555) 987-6543</td>
+                                                <td>Dr. Sarah Johnson</td>
+                                                <td>Migraine</td>
+                                                <td><span class="badge bg-primary">Admitted</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPatientModal"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPatientModal"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>PAT-003</td>
+                                                <td>Robert Davis</td>
+                                                <td>67/M</td>
+                                                <td>+1 (555) 765-4321</td>
+                                                <td>Dr. Robert Williams</td>
+                                                <td>Fractured Hip</td>
+                                                <td><span class="badge bg-warning">Critical</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPatientModal"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPatientModal"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>PAT-004</td>
+                                                <td>Sophia Martinez</td>
+                                                <td>4/F</td>
+                                                <td>+1 (555) 321-7654</td>
+                                                <td>Dr. Emily Chen</td>
+                                                <td>Respiratory Infection</td>
+                                                <td><span class="badge bg-success">Outpatient</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPatientModal"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPatientModal"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>PAT-005</td>
+                                                <td>Thomas Anderson</td>
+                                                <td>52/M</td>
+                                                <td>+1 (555) 543-2109</td>
+                                                <td>Dr. Michael Brown</td>
+                                                <td>Atopic Dermatitis</td>
+                                                <td><span class="badge bg-secondary">Discharged</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPatientModal"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPatientModal"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <span>Showing 1 to 5 of 2,453 entries</span>
+                                    </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination">
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="#" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white mt-auto">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright © MediCare Hospital Management System 2025</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Add Patient Modal -->
+    <div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPatientModalLabel">Add New Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" id="gender" required>
+                                    <option selected disabled value="">Choose...</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bloodGroup" class="form-label">Blood Group</label>
+                                <select class="form-select" id="bloodGroup">
+                                    <option selected disabled value="">Choose...</option>
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                    <option>O+</option>
+                                    <option>O-</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" rows="3"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="assignedDoctor" class="form-label">Assigned Doctor</label>
+                                <select class="form-select" id="assignedDoctor">
+                                    <option selected disabled value="">Choose...</option>
+                                    <option>Dr. John Smith</option>
+                                    <option>Dr. Sarah Johnson</option>
+                                    <option>Dr. Robert Williams</option>
+                                    <option>Dr. Emily Chen</option>
+                                    <option>Dr. Michael Brown</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Patient Status</label>
+                                <select class="form-select" id="status" required>
+                                    <option selected disabled value="">Choose...</option>
+                                    <option>Outpatient</option>
+                                    <option>Admitted</option>
+                                    <option>Critical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">Initial Diagnosis</label>
+                            <textarea class="form-control" id="diagnosis" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="medicalHistory" class="form-label">Medical History</label>
+                            <textarea class="form-control" id="medicalHistory" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="patientPhoto" class="form-label">Patient Photo</label>
+                            <input class="form-control" type="file" id="patientPhoto">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save Patient</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Patient Modal -->
+    <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPatientModalLabel">Patient Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <img src="/api/placeholder/150/150" alt="Patient Profile" class="img-fluid rounded-circle mb-2">
+                            <h5>James Wilson</h5>
+                            <p class="text-muted">45 years, Male</p>
+                            <span class="badge bg-success">Outpatient</span>
+                        </div>
+                        <div class="col-md-8">
+                            <h6 class="border-bottom pb-2 mb-3">Personal Information</h6>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Patient ID:</div>
+                                <div class="col-sm-8">PAT-001</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Full Name:</div>
+                                <div class="col-sm-8">James Wilson</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Date of Birth:</div>
+                                <div class="col-sm-8">14 April 1980 (45 years)</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Blood Group:</div>
+                                <div class="col-sm-8">O+</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Email:</div>
+                                <div class="col-sm-8">james.wilson@example.com</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Phone:</div>
+                                <div class="col-sm-8">+1 (555) 234-5678</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Address:</div>
+                                <div class="col-sm-8">456 Elm Street, Springfield, SP 67890</div>
+                            </div>
+
+                            <h6 class="border-bottom pb-2 mb-3 mt-4">Medical Information</h6>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Assigned Doctor:</div>
+                                <div class="col-sm-8">Dr. John Smith (Cardiology)</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Diagnosis:</div>
+                                <div class="col-sm-8">Hypertension, Stage 1</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Medical History:</div>
+                                <div class="col-sm-8">
+                                    <ul class="mb-0 ps-3">
+                                        <li>Family history of cardiovascular disease</li>
+                                        <li>Appendectomy in 2010</li>
+                                        <li>No known drug allergies</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Last Visit:</div>
+                                <div class="col-sm-8">March 5, 2025</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Next Appointment:</div>
+                                <div class="col-sm-8">April 12, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Visits History -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Recent Visits</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Doctor</th>
+                                    <th>Diagnosis</th>
+                                    <th>Treatment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mar 5, 2025</td>
+                                    <td>Dr. John Smith</td>
+                                    <td>Hypertension</td>
+                                    <td>Prescribed Lisinopril 10mg</td>
+                                </tr>
+                                <tr>
+                                    <td>Feb 3, 2025</td>
+                                    <td>Dr. John Smith</td>
+                                    <td>Follow-up Visit</td>
+                                    <td>Blood pressure stable, continue medication</td>
+                                </tr>
+                                <tr>
+                                    <td>Jan 5, 2025</td>
+                                    <td>Dr. John Smith</td>
+                                    <td>Annual Physical</td>
+                                    <td>Diagnosed with Hypertension</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editPatientModal">Edit Patient</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Patient Modal -->
+    <div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPatientModalLabel">Edit Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editFirstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editFirstName" value="James" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editLastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editLastName" value="Wilson" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="editDateOfBirth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="editDateOfBirth" value="1980-04-14" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editGender" class="form-label">Gender</label>
+                                <select class="form-select" id="editGender" required>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editBloodGroup" class="form-label">Blood Group</label>
+                                <select class="form-select" id="editBloodGroup">
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                    <option selected>O+</option>
+                                    <option>O-</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail" value="james.wilson@example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editPhone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="editPhone" value="+1 (555) 234-5678" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="editAddress" rows="3">456 Elm Street, Springfield, SP 67890</textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editAssignedDoctor" class="form-label">Assigned Doctor</label>
+                                <select class="form-select" id="editAssignedDoctor">
+                                    <option selected>Dr. John Smith</option>
+                                    <option>Dr. Sarah Johnson</option>
+                                    <option>Dr. Robert Williams</option>
+                                    <option>Dr. Emily Chen</option>
+                                    <option>Dr. Michael Brown</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editStatus" class="form-label">Patient Status</label>
+                                <select class="form-select" id="editStatus" required>
+                                    <option selected>Outpatient</option>
+                                    <option>Admitted</option>
+                                    <option>Critical</option>
+                                    <option>Discharged</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDiagnosis" class="form-label">Diagnosis</label>
+                            <textarea class="form-control" id="editDiagnosis" rows="3">Hypertension, Stage 1</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMedicalHistory" class="form-label">Medical History</label>
+                            <textarea class="form-control" id="editMedicalHistory" rows="3">Family history of cardiovascular disease
+Appendectomy in 2010
+No known drug allergies</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPatientPhoto" class="form-label">Change Patient Photo</label>
+                            <input class="form-control" type="file" id="editPatientPhoto">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

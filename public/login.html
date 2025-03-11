@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Hospital Management System - Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fc;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+            border-radius: 1rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin: 0 auto;
+        }
+        .login-header {
+            background: #4e73df;
+            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: white;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        .hospital-logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-floating label {
+            color: #6e707e;
+        }
+        .btn-login {
+            background-color: #4e73df;
+            border-color: #4e73df;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .btn-login:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+            color: white;
+        }
+        .forgot-password {
+            color: #4e73df;
+            text-decoration: none;
+        }
+        .forgot-password:hover {
+            color: #224abe;
+            text-decoration: underline;
+        }
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .divider:before, .divider:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #e3e6f0;
+        }
+        .divider:before {
+            left: 0;
+        }
+        .divider:after {
+            right: 0;
+        }
+        .divider-text {
+            display: inline-block;
+            padding: 0 1rem;
+            background-color: #fff;
+            position: relative;
+            color: #b7b9cc;
+        }
+        .login-footer {
+            font-size: 0.8rem;
+            color: #858796;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .role-selector {
+            margin-bottom: 1.5rem;
+        }
+        .role-btn {
+            border: 1px solid #e3e6f0;
+            background-color: #fff;
+            color: #6e707e;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s;
+        }
+        .role-btn.active {
+            background-color: #4e73df;
+            color: white;
+            border-color: #4e73df;
+        }
+        .role-btn:first-child {
+            border-top-left-radius: 0.35rem;
+            border-bottom-left-radius: 0.35rem;
+        }
+        .role-btn:last-child {
+            border-top-right-radius: 0.35rem;
+            border-bottom-right-radius: 0.35rem;
+        }
+        .alert {
+            font-size: 0.85rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card bg-white">
+            <div class="login-header">
+                <div class="hospital-logo">
+                    <i class="fas fa-hospital-alt"></i>
+                </div>
+                <h1 class="h4 mb-2">MediCare</h1>
+                <p class="mb-0">Hospital Management System</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h2 class="h5 text-gray-900">Welcome Back!</h2>
+                    <p class="text-muted">Enter your credentials to access your account</p>
+                </div>
+                
+                <!-- Role Selector -->
+                <div class="role-selector d-flex justify-content-center">
+                    <div class="btn-group" role="group" aria-label="User Role Selection">
+                        <button type="button" class="role-btn active" id="btn-doctor">Doctor</button>
+                        <button type="button" class="role-btn" id="btn-nurse">Nurse</button>
+                        <button type="button" class="role-btn" id="btn-admin">Admin</button>
+                        <button type="button" class="role-btn" id="btn-staff">Staff</button>
+                    </div>
+                </div>
+                
+                <!-- Alert Message (Hidden by default) -->
+                <div class="alert alert-danger mb-4 d-none" id="login-alert" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Invalid username or password. Please try again.
+                </div>
+
+                <!-- Login Form -->
+                <form class="user" id="login-form">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" placeholder="Username">
+                        <label for="username"><i class="fas fa-user me-2"></i>Username</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" placeholder="Password">
+                        <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                        <label class="form-check-label text-muted" for="rememberMe">
+                            Remember me
+                        </label>
+                        <a class="forgot-password float-end" href="#" id="forgot-password">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-login btn-block">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider">
+                    <span class="divider-text">or</span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-light btn-block border">
+                        <i class="fab fa-google me-2"></i> Sign in with Google
+                    </button>
+                    <button class="btn btn-light btn-block border">
+                        <i class="fab fa-microsoft me-2"></i> Sign in with Microsoft
+                    </button>
+                </div>
+
+                <div class="login-footer">
+                    <p>© 2025 MediCare Hospital Management System. All rights reserved.</p>
+                    <p>
+                        <a href="#" class="text-muted me-3">Privacy Policy</a>
+                        <a href="#" class="text-muted me-3">Terms of Service</a>
+                        <a href="#" class="text-muted">Contact Support</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Role Selector Toggle
+            const roleButtons = document.querySelectorAll('.role-btn');
+            roleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    roleButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Form Submission (demo)
+            const loginForm = document.getElementById('login-form');
+            const loginAlert = document.getElementById('login-alert');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Demo validation (replace with actual authentication in real application)
+                if (username === 'demo' && password === 'password') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    loginAlert.classList.remove('d-none');
+                    setTimeout(() => {
+                        loginAlert.classList.add('d-none');
+                    }, 5000);
+                }
+            });
+
+            // Forgot Password
+            document.getElementById('forgot-password').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Password reset functionality would be implemented here.');
+            });
+        });
+    </script>
+</body>
+</html>

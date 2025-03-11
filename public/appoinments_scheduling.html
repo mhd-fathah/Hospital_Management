@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System - Appointments Scheduling</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #4e73df;
+            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+        }
+        .sidebar-link {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            border-radius: 0.35rem;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-heading {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .content-wrapper {
+            min-height: 100vh;
+        }
+        .modal-header {
+            background-color: #4e73df;
+            color: white;
+        }
+        .fc-event {
+            cursor: pointer;
+        }
+        .appointment-confirmed {
+            background-color: #1cc88a;
+            border-color: #1cc88a;
+        }
+        .appointment-pending {
+            background-color: #f6c23e;
+            border-color: #f6c23e;
+        }
+        .appointment-cancelled {
+            background-color: #e74a3b;
+            border-color: #e74a3b;
+        }
+        .calendar-container {
+            height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar text-white px-0 pt-3 d-flex flex-column flex-shrink-0" style="width: 220px;">
+            <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none ps-4">
+                <span class="fs-4 fw-bold">MediCare</span>
+            </a>
+            <hr class="text-white mx-3">
+            
+            <ul class="nav nav-pills flex-column mb-auto px-2">
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-tachometer-alt me-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                
+                <div class="sidebar-heading mt-3 ps-3 mb-1">Management</div>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-user-md me-2"></i>
+                        Doctors
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-users me-2"></i>
+                        Patients
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link active d-flex align-items-center">
+                        <i class="fas fa-fw fa-calendar-check me-2"></i>
+                        Appointments
+                    </a>
+                </li>
+                
+                <div class="sidebar-heading mt-3 ps-3 mb-1">Reports</div>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-chart-line me-2"></i>
+                        Statistics
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="#" class="nav-link sidebar-link d-flex align-items-center">
+                        <i class="fas fa-fw fa-file-invoice-dollar me-2"></i>
+                        Billing
+                    </a>
+                </li>
+            </ul>
+            
+            <hr class="text-white mx-3">
+            <div class="dropdown px-3 mb-3">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="/api/placeholder/32/32" alt="Admin" width="32" height="32" class="rounded-circle me-2">
+                    <strong>Admin</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper flex-grow-1 bg-light">
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white shadow-sm mb-4">
+                <div class="container-fluid">
+                    <button class="btn" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="d-flex ms-auto">
+                        <div class="input-group me-3">
+                            <input class="form-control border-0 small" type="search" placeholder="Search..." aria-label="Search">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="vr mx-3"></div>
+                        <div class="dropdown">
+                            <a href="#" class="position-relative me-3 text-dark">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    3+
+                                </span>
+                            </a>
+                        </div>
+                        <div class="dropdown">
+                            <a href="#" class="position-relative me-3 text-dark">
+                                <i class="fas fa-envelope fa-fw"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    7
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <div class="container-fluid px-4">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Appointments Scheduling</h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAppointmentModal">
+                        <i class="fas fa-plus-circle me-1"></i> Schedule New Appointment
+                    </button>
+                </div>
+
+                <!-- Content Row -->
+                <div class="row">
+                    <!-- Calendar View -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Appointment Calendar</h6>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary">Month</button>
+                                    <button type="button" class="btn btn-sm btn-primary">Week</button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary">Day</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="calendar-container">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-secondary me-1">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                        <h5 class="m-0">March 11 - 17, 2025</h5>
+                                        <button class="btn btn-sm btn-outline-secondary">Today</button>
+                                    </div>
+                                    
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th width="60">Time</th>
+                                                <th>Monday<br>Mar 10</th>
+                                                <th>Tuesday<br>Mar 11</th>
+                                                <th>Wednesday<br>Mar 12</th>
+                                                <th>Thursday<br>Mar 13</th>
+                                                <th>Friday<br>Mar 14</th>
+                                                <th>Saturday<br>Mar 15</th>
+                                                <th>Sunday<br>Mar 16</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>9:00</td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        John Smith - Dr. Johnson
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-pending">
+                                                        Michael Lee - Dr. Garcia
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>10:00</td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Susan Williams - Dr. Martinez
+                                                    </div>
+                                                </td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Jessica Brown - Dr. Wilson
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>11:00</td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-cancelled">
+                                                        David Clark - Dr. Lee
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Sarah Johnson - Dr. Wilson
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>12:00</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>1:00</td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-pending">
+                                                        Robert Brown - Dr. Lee
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Patricia Wilson - Dr. Martinez
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>2:00</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Thomas Moore - Dr. Johnson
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>3:00</td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Emily Davis - Dr. Wilson
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-pending">
+                                                        Kevin Roberts - Dr. Lee
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>4:00</td>
+                                                <td class="position-relative">
+                                                    <div class="p-1 text-white rounded appointment-confirmed">
+                                                        Lisa Wong - Dr. Garcia
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Appointments and Info -->
+                    <div class="col-xl-4 col-lg-5">
+                        <!-- Today's Appointments -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Today's Appointments</h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item list-group-item-action py-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">John Smith - Dr. Johnson</h6>
+                                            <small class="text-success">9:00 AM</small>
+                                        </div>
+                                        <p class="mb-1">General checkup</p>
+                                        <div class="d-flex">
+                                            <span class="badge bg-success me-1">Confirmed</span>
+                                            <small>Patient ID: P10045</small>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item list-group-item-action py-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">Susan Williams - Dr. Martinez</h6>
+                                            <small class="text-success">10:30 AM</small>
+                                        </div>
+                                        <p class="mb-1">Follow-up appointment</p>
+                                        <div class="d-flex">
+                                            <span class="badge bg-success me-1">Confirmed</span>
+                                            <small>Patient ID: P10078</small>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item list-group-item-action py-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">Robert Brown - Dr. Lee</h6>
+                                            <small class="text-warning">1:15 PM</small>
+                                        </div>
+                                        <p class="mb-1">Consultation for back pain</p>
+                                        <div class="d-flex">
+                                            <span class="badge bg-warning me-1">Pending</span>
+                                            <small>Patient ID: P10102</small>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item list-group-item-action py-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">Emily Davis - Dr. Wilson</h6>
+                                            <small class="text-success">3:00 PM</small>
+                                        </div>
+                                        <p class="mb-1">Annual physical exam</p>
+                                        <div class="d-flex">
+                                            <span class="badge bg-success me-1">Confirmed</span>
+                                            <small>Patient ID: P10124</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Legend -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Legend</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #1cc88a; border-radius: 3px;"></div>
+                                    <span>Confirmed Appointment</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #f6c23e; border-radius: 3px;"></div>
+                                    <span>Pending Appointment</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #e74a3b; border-radius: 3px;"></div>
+                                    <span>Cancelled Appointment</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAppointmentModal">
+                                        <i class="fas fa-plus-circle me-1"></i> New Appointment
+                                    </button>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-file-export me-1"></i> Export Schedule
+                                    </button>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-envelope me-1"></i> Send Reminders
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white mt-auto">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto py-3">
+                        <span>Copyright &copy; MediCare Hospital Management System 2025</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Add New Appointment Modal -->
+    <div class="modal fade" id="addAppointmentModal" tabindex="-1" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAppointmentModalLabel">Schedule New Appointment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="patientSelect" class="form-label">Patient</label>
+                                <select class="form-select" id="patientSelect" required>
+                                    <option value="" selected disabled>Select Patient</option>
+                                    <option value="1">John Smith (P10045)</option>
+                                    <option value="2">Susan Williams (P10078)</option>
+                                    <option value="3">Robert Brown (P10102)</option>
+                                    <option value="4">Emily Davis (P10124)</option>
+                                    <option value="5">Michael Johnson (P10156)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="doctorSelect" class="form-label">Doctor</label>
+                                <select class="form-select" id="doctorSelect" required>
+                                    <option value="" selected disabled>Select Doctor</option>
+                                    <option value="1">Dr. Johnson - Cardiology</option>
+                                    <option value="2">Dr. Martinez - Neurology</option>
+                                    <option value="3">Dr. Lee - Orthopedics</option>
+                                    <option value="4">Dr. Wilson - Pediatrics</option>
+                                    <option value="5">Dr. Garcia - Dermatology</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="appointmentDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="appointmentDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="appointmentTime" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="appointmentTime" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="appointmentType" class="form-label">Appointment Type</label>
+                            <select class="form-select" id="appointmentType" required>
+                                <option value="" selected disabled>Select Type</option>
+                                <option value="consultation">Consultation</option>
+                                <option value="followup">Follow-up</option>
+                                <option value="checkup">General Check-up</option>
+                                <option value="emergency">Emergency</option>
+                                <option value="procedure">Procedure</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="appointmentNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="appointmentNotes" rows="3"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="appointmentDuration" class="form-label">Duration (minutes)</label>
+                                <select class="form-select" id="appointmentDuration">
+                                    <option value="15">15</option>
+                                    <option value="30" selected>30</option>
+                                    <option value="45">45</option>
+                                    <option value="60">60</option>
+                                    <option value="90">90</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="appointmentStatus" class="form-label">Status</label>
+                                <select class="form-select" id="appointmentStatus">
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="pending" selected>Pending</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Schedule Appointment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
