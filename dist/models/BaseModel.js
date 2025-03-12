@@ -27,6 +27,11 @@ export class BaseModel {
             return yield this.model.find();
         });
     }
+    find(filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.model.find(filter);
+        });
+    }
     updateById(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.model.findByIdAndUpdate(id, data, { new: true });

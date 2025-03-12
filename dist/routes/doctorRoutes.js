@@ -4,6 +4,7 @@ import upload from "../middleware/upload.js";
 const router = express.Router();
 router.get("/", DoctorController.doctorPage);
 router.post("/add", upload.single("profileImage"), DoctorController.addDoctor);
+router.get("/filter", DoctorController.filterDoctors);
 router.get("/:id", DoctorController.getDoctorById);
 router.put("/update/:id", DoctorController.updateDoctor);
 router.delete("/delete/:id", DoctorController.deleteDoctor);

@@ -63,6 +63,17 @@ class DoctorController extends BaseController {
                 return this.sendNotFound(res, "Doctor not found!");
             this.sendSuccess(res, "Doctor deleted successfully");
         }));
+        this.filterDoctors = asyncHandler((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { department } = req.query;
+            let doctors;
+            if (department === "All" || !department) {
+                doctors = yield DoctorModel.findAll();
+            }
+            else {
+                doctors = yield DoctorModel.find({ department });
+            }
+            this.sendSuccess(res, "Doctors filtered successfully", { doctors });
+        }));
         this.doctorPage = this.doctorPage.bind(this);
         this.addDoctor = this.addDoctor.bind(this);
         this.getDoctorById = this.getDoctorById.bind(this);
