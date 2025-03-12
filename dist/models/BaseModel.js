@@ -37,4 +37,13 @@ export class BaseModel {
             return yield this.model.findByIdAndDelete(id);
         });
     }
+    findPaginated() {
+        return __awaiter(this, arguments, void 0, function* (page = 1, limit = 5) {
+            const skip = (page - 1) * limit;
+            const totalDocs = yield this.model.countDocuments();
+            const totalPages = Math.ceil(totalDocs / limit);
+            const data = yield this.model.find().skip(skip).limit(limit);
+            return { data, totalPages, currentPage: page };
+        });
+    }
 }

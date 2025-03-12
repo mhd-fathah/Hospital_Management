@@ -11,7 +11,7 @@ const DoctorSchema = new Schema({
     qualification: { type: String, required: true },
     joiningDate: { type: Date, required: true, default: Date.now },
     status: { type: String, required: true, enum: ["Active", "Inactive", "On Leave"] },
-    profileImage: { type: String, required: true }
+    profileImage: { type: String, required: false }
 });
 class DoctorModel extends BaseModel {
     constructor() {

@@ -1,5 +1,10 @@
 import express from "express";
 import DoctorController from "../controllers/doctorController.js";
+import upload from "../middleware/upload.js";
 const router = express.Router();
-router.get("/doctors", DoctorController.doctorPage);
+router.get("/", DoctorController.doctorPage);
+router.post("/add", upload.single("profileImage"), DoctorController.addDoctor);
+router.get("/:id", DoctorController.getDoctorById);
+router.put("/update/:id", DoctorController.updateDoctor);
+router.delete("/delete/:id", DoctorController.deleteDoctor);
 export default router;
