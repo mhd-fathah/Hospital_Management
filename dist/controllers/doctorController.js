@@ -37,14 +37,6 @@ class DoctorController extends BaseController {
             console.log(doctor);
             this.sendSuccess(res, "Doctor added Successfully!", doctor);
         }));
-        // async getAllDoctors(req: Request, res: Response){
-        //     try{
-        //         const doctors = await DoctorModel.findAll();
-        //         this.sendSuccess(res,"Doctors fetched successfully",doctors);
-        //     }catch (error){
-        //         this.sendError(res,"Error fetching doctors",error);
-        //     }
-        // }
         this.getDoctorById = asyncHandler((req, res) => __awaiter(this, void 0, void 0, function* () {
             const doctor = yield DoctorModel.findById(req.params.id);
             if (!doctor)

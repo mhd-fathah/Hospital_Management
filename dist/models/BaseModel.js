@@ -51,4 +51,9 @@ export class BaseModel {
             return { data, totalPages, currentPage: page };
         });
     }
+    countDocuments() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.model.countDocuments();
+        });
+    }
 }
