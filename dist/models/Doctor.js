@@ -12,7 +12,7 @@ const DoctorSchema = new Schema({
     joiningDate: { type: Date, required: true, default: Date.now },
     status: { type: String, required: true, enum: ["Active", "Inactive", "On Leave"] },
     profileImage: { type: String, required: false }
-});
+}, { timestamps: true });
 class DoctorModel extends BaseModel {
     constructor() {
         super("Doctor", DoctorSchema);

@@ -9,7 +9,7 @@ const AppoinmentSchema = new Schema({
     notes: { type: String, required: false },
     duration: { type: String, required: true, enum: ["15 min", "30 min", "45 min", "1 hour"] },
     status: { type: String, required: true, enum: ["Scheduled", "Completed", "Cancelled"] }
-});
+}, { timestamps: true });
 class AppointmentModel extends BaseModel {
     constructor() {
         super("Appointment", AppoinmentSchema);

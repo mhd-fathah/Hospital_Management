@@ -12,6 +12,9 @@ export class BaseModel {
     constructor(modelName, schema) {
         this.model = mongoose.model(modelName, schema);
     }
+    getModel() {
+        return this.model;
+    }
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.model.create(data);
@@ -49,6 +52,11 @@ export class BaseModel {
             const totalPages = Math.ceil(totalDocs / limit);
             const data = yield this.model.find().skip(skip).limit(limit);
             return { data, totalPages, currentPage: page };
+        });
+    }
+    findWithFilter(filter, fields) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.model.find(filter, fields ? fields.replace("+", " ") : "");
         });
     }
     countDocuments() {

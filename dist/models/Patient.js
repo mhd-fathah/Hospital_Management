@@ -14,7 +14,7 @@ const PatientSchema = new Schema({
     initialDiagnosis: { type: String, required: true },
     medicalHistory: { type: String, required: true },
     patientPhoto: { type: String, required: false }
-});
+}, { timestamps: true });
 class PatientModel extends BaseModel {
     constructor() {
         super("Patient", PatientSchema);
